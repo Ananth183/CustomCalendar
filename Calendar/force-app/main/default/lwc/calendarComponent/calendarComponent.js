@@ -11,9 +11,11 @@ export default class CalendarComponent extends LightningElement {
     @track timeZone = 'NZ'; // Default to NZ time zone
     @track currentTimeZone = 'NZST'; // To display on UI
 
+    @track selectedEventStartTimeNZ;
+    @track selectedEventEndTimeNZ;
+    @track selectedEventStartTimeIST;
+    @track selectedEventEndTimeIST;
 
-    @track selectedEventStartTimeLocal;
-    @track selectedEventEndTimeLocal;
     connectedCallback() {
         this.initializeMonth();
         this.loadEvents();
@@ -37,37 +39,57 @@ export default class CalendarComponent extends LightningElement {
         const days = [];
         const monthStartDay = this.startDate.getDay();
         const totalDays = this.endDate.getDate();
-
+    
+        // Pad the grid with empty slots for alignment at the start of the week
         for (let i = 0; i < monthStartDay; i++) {
             days.push({ date: null, dayNumber: null, events: [] });
         }
-
+    
+        // Loop through each day in the month
         for (let day = 1; day <= totalDays; day++) {
             const date = new Date(this.startDate.getFullYear(), this.startDate.getMonth(), day);
             const dayEvents = this.getEventsForDay(date, events);
             days.push({ date: date.toDateString(), dayNumber: day, events: dayEvents });
         }
-
+    
         this.daysInMonth = days;
     }
-
+    
     getEventsForDay(date, events) {
         return events.filter(event => {
-            const startDate = new Date(event.Start_Date__c);
-            const endDate = new Date(event.End_Date__c);
-            return date >= startDate && date <= endDate;
+            // Use the appropriate start and end date fields based on the selected time zone
+            const startDate = this.timeZone === 'NZ'
+                ? new Date(event.Start_Date_NZ__c)
+                : new Date(event.Start_Date_IST__c);
+            const endDate = this.timeZone === 'NZ'
+                ? new Date(event.End_Date_NZ__c)
+                : new Date(event.End_Date_IST__c);
+    
+            // Ensure the date falls within the event start and end range
+            return (
+                date.getTime() >= new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate()).getTime() &&
+                date.getTime() <= new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate()).getTime()
+            );
         });
     }
+    
+    
+    
 
     loadEvents() {
-        getEventsByDateRange({ startDate: this.startDate, endDate: this.endDate })
-            .then(data => {
-                this.updateMonthGrid(data);
-            })
-            .catch(error => {
-                console.error('Error loading events', error);
-            });
+        getEventsByDateRange({ 
+            startDate: this.startDate, 
+            endDate: this.endDate, 
+            timeZone: this.timeZone 
+        })
+        .then(data => {
+            this.updateMonthGrid(data);
+        })
+        .catch(error => {
+            console.error('Error loading events', error);
+        });
     }
+    
 
     handlePreviousMonth() {
         const prevMonth = new Date(this.startDate);
@@ -92,24 +114,24 @@ export default class CalendarComponent extends LightningElement {
 
     convertTimes() {
         if (this.selectedEvent) {
-            const startTimeUTC = new Date(this.selectedEvent.Start_Date__c);
-            const endTimeUTC = new Date(this.selectedEvent.End_Date__c);
-            const offsetHours = this.timeZone === 'NZ' ? 0 : 5.5;
-            this.selectedEventStartTimeLocal = this.convertToTimeZone(startTimeUTC, offsetHours);
-            this.selectedEventEndTimeLocal = this.convertToTimeZone(endTimeUTC, offsetHours);
+            const startTimeNZ = new Date(this.selectedEvent.Start_Date_NZ__c);
+            const endTimeNZ = new Date(this.selectedEvent.End_Date_NZ__c);
+            const startTimeIST = new Date(this.selectedEvent.Start_Date_IST__c);
+            const endTimeIST = new Date(this.selectedEvent.End_Date_IST__c);
+            
+            // Set times for both NZ and IST
+            this.selectedEventStartTimeNZ = startTimeNZ.toLocaleString('en-NZ'); // Format for NZ
+            this.selectedEventEndTimeNZ = endTimeNZ.toLocaleString('en-NZ');
+            this.selectedEventStartTimeIST = startTimeIST.toLocaleString('en-IN'); // Format for IST
+            this.selectedEventEndTimeIST = endTimeIST.toLocaleString('en-IN');
         }
-    }
-
-    convertToTimeZone(date, offsetHours) {
-        const offsetMillis = offsetHours * 60 * 60 * 1000;
-        const newDate = new Date(date.getTime() + offsetMillis);
-        return newDate.toLocaleString();
     }
 
     toggleTimeZone() {
         this.timeZone = this.timeZone === 'NZ' ? 'IST' : 'NZ';
         this.currentTimeZone = this.timeZone === 'NZ' ? 'NZST' : 'IST';
-        this.convertTimes();
+        this.convertTimes(); // Update times whenever timezone is toggled
+        this.loadEvents();  // Reload events on toggle change
     }
 
     closeModal() {
