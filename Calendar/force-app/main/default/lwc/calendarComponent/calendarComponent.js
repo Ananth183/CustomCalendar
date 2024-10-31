@@ -28,12 +28,15 @@ export default class CalendarComponent extends LightningElement {
     }
 
     setMonthRange(date) {
+        // Regular start and end dates for the calendar month
         const start = new Date(date.getFullYear(), date.getMonth(), 1);
         const end = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    
         this.startDate = start;
         this.endDate = end;
         this.currentMonth = start.toLocaleString('default', { month: 'long', year: 'numeric' });
     }
+    
 
     updateMonthGrid(events = []) {
         const days = [];
@@ -57,21 +60,20 @@ export default class CalendarComponent extends LightningElement {
     
     getEventsForDay(date, events) {
         return events.filter(event => {
-            // Use the appropriate start and end date fields based on the selected time zone
-            const startDate = this.timeZone === 'NZ'
-                ? new Date(event.Start_Date_NZ__c)
+            const eventStartDate = this.timeZone === 'NZ' 
+                ? new Date(event.Start_Date_NZ__c) 
                 : new Date(event.Start_Date_IST__c);
-            const endDate = this.timeZone === 'NZ'
-                ? new Date(event.End_Date_NZ__c)
+            const eventEndDate = this.timeZone === 'NZ' 
+                ? new Date(event.End_Date_NZ__c) 
                 : new Date(event.End_Date_IST__c);
     
-            // Ensure the date falls within the event start and end range
+            // Include events if any part of them overlaps the current day in the calendar
             return (
-                date.getTime() >= new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate()).getTime() &&
-                date.getTime() <= new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate()).getTime()
+                eventStartDate <= date && eventEndDate >= date
             );
         });
     }
+    
     
     
     
