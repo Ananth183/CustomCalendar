@@ -97,10 +97,36 @@
     max-width: 500px; /* Maximum width */
     margin: auto; /* Center the modal */
     border-radius: 5px; /* Rounded corners for modal */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
 }
 
 .modal-content {
     font-size: 0.9rem; /* Adjust font size for modal content */
+    padding: 1rem; /* Add padding for content spacing */
+}
+
+.modal-content p {
+    margin: 0.5rem 0; /* Margin for paragraphs for better spacing */
+    line-height: 1.5; /* Improved line height for readability */
+}
+
+.slds-modal__header h2 {
+    font-size: 1.25rem; /* Slightly larger title font size */
+    color: #0070d2; /* Use the primary Salesforce color for the title */
+}
+
+.slds-modal__footer {
+    display: flex;
+    justify-content: flex-end; /* Align buttons to the right */
+}
+
+.slds-button {
+    margin-left: 0.5rem; /* Space between footer buttons */
+}
+
+/* Additional styling for status text */
+.modal-content strong {
+    color: #333; /* Dark color for strong text for better contrast */
 }
 
 /* Additional styles for larger screens */
