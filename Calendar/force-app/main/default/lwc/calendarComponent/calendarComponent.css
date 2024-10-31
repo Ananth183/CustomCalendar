@@ -96,7 +96,6 @@
     width: 90%; /* Responsive width */
     max-width: 500px; /* Maximum width */
     margin: auto; /* Center the modal */
-    border: 1px solid #ddd; /* Border for modal */
     border-radius: 5px; /* Rounded corners for modal */
 }
 

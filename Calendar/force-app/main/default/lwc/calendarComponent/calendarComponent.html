@@ -1,5 +1,5 @@
 <template>
-    <lightning-card title="Calendar Events" icon-name="standard:event">
+    <lightning-card title="Ananth Calendar" icon-name="standard:event">
         <div class="button-container">
             <lightning-button variant="neutral" label={timeZoneButtonText} onclick={toggleTimeZone}></lightning-button>
         </div>
@@ -43,15 +43,16 @@
                     <h2 class="slds-text-heading_medium">{selectedEvent.Name}</h2>
                 </header>
                 <div class="slds-modal__content modal-content">
-                    <p><strong>Description:</strong> {selectedEvent.Description__c}</p>
                     <p><strong>Status:</strong> {selectedEvent.Status__c}</p>
                     <p><strong>Start Time (NZST):</strong> {selectedEventStartTimeNZ}</p>
                     <p><strong>End Time (NZST):</strong> {selectedEventEndTimeNZ}</p>
                     <p><strong>Start Time (IST):</strong> {selectedEventStartTimeIST}</p>
                     <p><strong>End Time (IST):</strong> {selectedEventEndTimeIST}</p>
+                    <p><strong>Description:</strong> {selectedEvent.Description__c}</p>
                 </div>
                 <footer class="slds-modal__footer">
                     <button class="slds-button slds-button_neutral" onclick={closeModal}>Close</button>
+                    <button class="slds-button slds-button_brand" onclick={navigateToRecord}>Go to Event</button> <!-- New Button -->
                 </footer>
             </div>
         </section>

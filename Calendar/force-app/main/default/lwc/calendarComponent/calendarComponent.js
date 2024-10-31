@@ -1,7 +1,9 @@
 import { LightningElement, track } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation'; 
 import getEventsByDateRange from '@salesforce/apex/CalendarController.getEventsByDateRange';
 
-export default class CalendarComponent extends LightningElement {
+export default class CalendarComponent extends NavigationMixin(LightningElement) { // Extend NavigationMixin
+
     @track currentMonth;
     @track daysInMonth = [];
     @track dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']; // Add this line
@@ -27,6 +29,20 @@ export default class CalendarComponent extends LightningElement {
         const today = new Date();
         this.setMonthRange(today);
         this.updateMonthGrid();
+    }
+
+     // New method to navigate to the record
+     navigateToRecord() {
+        if (this.selectedEvent) {
+            this[NavigationMixin.Navigate]({
+                type: 'standard__recordPage',
+                attributes: {
+                    recordId: this.selectedEvent.Id, // Use the Id of the selected event
+                    objectApiName: 'Event__c', // Replace with your object's API name
+                    actionName: 'view'
+                }
+            });
+        }
     }
 
     setMonthRange(date) {
@@ -118,27 +134,25 @@ export default class CalendarComponent extends LightningElement {
     
     getEventsForDay(date, events) {
         return events.filter(event => {
-            const eventStartDate = this.timeZone === 'NZ' 
-                ? new Date(event.Start_Date_NZ__c) 
+            const eventStartDate = this.timeZone === 'NZ'
+                ? new Date(event.Start_Date_NZ__c)
                 : new Date(event.Start_Date_IST__c);
-            const eventEndDate = this.timeZone === 'NZ' 
-                ? new Date(event.End_Date_NZ__c) 
+            const eventEndDate = this.timeZone === 'NZ'
+                ? new Date(event.End_Date_NZ__c)
                 : new Date(event.End_Date_IST__c);
     
-            // Log the comparison details for debugging
-            console.log('Checking date:', date);
-            console.log('Event Start:', eventStartDate, 'Event End:', eventEndDate);
-    
-            // Check if the event covers the date (i.e., it starts on or before the date and ends on or after the date)
-            const isEventInDay = eventStartDate <= date && eventEndDate >= date;
-            if (isEventInDay) {
-                console.log('Event matches for date:', date);
-            }
+            // Create Date objects for comparison with only the date (no time)
+            const startOfDay = new Date(date);
+            startOfDay.setHours(0, 0, 0, 0); // Set to the start of the day (midnight)
             
+            const endOfDay = new Date(date);
+            endOfDay.setHours(23, 59, 59, 999); // Set to the end of the day (just before midnight)
+    
+            // Check if the event covers the date (i.e., it starts on or before the end of the day and ends on or after the start of the day)
+            const isEventInDay = eventStartDate <= endOfDay && eventEndDate >= startOfDay;
             return isEventInDay;
         });
     }
-    
     
     
     
