@@ -4,6 +4,7 @@ import getEventsByDateRange from '@salesforce/apex/CalendarController.getEventsB
 export default class CalendarComponent extends LightningElement {
     @track currentMonth;
     @track daysInMonth = [];
+    @track dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']; // Add this line
     @track startDate;
     @track endDate;
     @track selectedEvent = null;
@@ -51,14 +52,28 @@ export default class CalendarComponent extends LightningElement {
         for (let i = monthStartDay - 1; i >= 0; i--) {
             const date = new Date(this.startDate.getFullYear(), this.startDate.getMonth() - 1, daysInPreviousMonth - i);
             const dayEvents = this.getEventsForDay(date, events);
-            days.push({ date: date.toDateString(), dayNumber: date.getDate(), events: dayEvents, isInCurrentMonth: false });
+            days.push({
+                date: date.toDateString(),
+                dayNumber: date.getDate(),
+                events: dayEvents,
+                isInCurrentMonth: false, // Mark as not current month
+                isDisabled: true ,// Mark as disabled
+                className: this.getDayClass(true)
+            });
         }
     
         // Main month loop for each day in October
         for (let day = 1; day <= totalDaysInMonth; day++) {
             const date = new Date(this.startDate.getFullYear(), this.startDate.getMonth(), day);
             const dayEvents = this.getEventsForDay(date, events);
-            days.push({ date: date.toDateString(), dayNumber: day, events: dayEvents, isInCurrentMonth: true });
+            days.push({
+                date: date.toDateString(),
+                dayNumber: day,
+                events: dayEvents,
+                isInCurrentMonth: true,
+                isDisabled: false, // Mark as enabled
+                className: this.getDayClass(false)
+            });
         }
     
         // Include the first few days of November for events that continue from October
@@ -66,21 +81,38 @@ export default class CalendarComponent extends LightningElement {
         for (let i = 1; i <= numberOfNextMonthDaysToShow; i++) {
             const nextMonthDate = new Date(this.startDate.getFullYear(), this.startDate.getMonth() + 1, i);
             const dayEvents = this.getEventsForDay(nextMonthDate, events);
-            days.push({ date: nextMonthDate.toDateString(), dayNumber: nextMonthDate.getDate(), events: dayEvents, isInCurrentMonth: false });
+            days.push({
+                date: nextMonthDate.toDateString(),
+                dayNumber: nextMonthDate.getDate(),
+                events: dayEvents,
+                isInCurrentMonth: false, // Mark as not current month
+                isDisabled: true ,
+                className: this.getDayClass(true)
+            });
         }
     
         // Complete the row by adding any remaining blank days
         while (days.length % 7 !== 0) {
             const extraDate = new Date(this.startDate.getFullYear(), this.startDate.getMonth() + 1, numberOfNextMonthDaysToShow + 1);
             const dayEvents = this.getEventsForDay(extraDate, events);
-            days.push({ date: extraDate.toDateString(), dayNumber: extraDate.getDate(), events: dayEvents, isInCurrentMonth: false });
+            days.push({
+                date: extraDate.toDateString(),
+                dayNumber: extraDate.getDate(),
+                events: dayEvents,
+                isInCurrentMonth: false, // Mark as not current month
+                isDisabled: true,
+                className: this.getDayClass(true)
+            });
         }
     
         this.daysInMonth = days;
-        console.log('days in month---',this.daysInMonth);
+        console.log('days in month---', this.daysInMonth);
     }
     
     
+    getDayClass(isDisabled) {
+        return isDisabled ? 'calendar-day greyed-out' : 'calendar-day';
+    }
     
     
     

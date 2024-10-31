@@ -1,15 +1,24 @@
 <template>
     <lightning-card title="Calendar Events" icon-name="standard:event">
+        <div class="button-container">
+            <lightning-button variant="neutral" label={timeZoneButtonText} onclick={toggleTimeZone}></lightning-button>
+        </div>
         <div class="calendar-controls">
             <lightning-button-icon icon-name="utility:left" alternative-text="Previous Month" onclick={handlePreviousMonth}></lightning-button-icon>
             <h2 class="current-month">{currentMonth}</h2>
             <lightning-button-icon icon-name="utility:right" alternative-text="Next Month" onclick={handleNextMonth}></lightning-button-icon>
-            <lightning-button variant="neutral" label={timeZoneButtonText} onclick={toggleTimeZone}></lightning-button>
+        </div>
+
+        <!-- Day Names Header -->
+        <div class="calendar-day-names">
+            <template for:each={dayNames} for:item="dayName">
+                <div key={dayName} class="day-name">{dayName}</div>
+            </template>
         </div>
 
         <div class="calendar-grid">
             <template for:each={daysInMonth} for:item="day">
-                <div key={day.date} class="calendar-day">
+                <div key={day.date} class={day.className}>
                     <div class="day-header">
                         <span if:true={day.dayNumber}>{day.dayNumber}</span>
                     </div>
@@ -21,6 +30,7 @@
                 </div>
             </template>
         </div>
+        
     </lightning-card>
 
     <template if:true={isModalOpen}>
