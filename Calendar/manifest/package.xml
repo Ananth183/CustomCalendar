@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>CalendarController</members>
+		<members>CalendarEventTriggerHandler</members>
+		<name>ApexClass</name>
+	</types>
+	<types>
+		<members>EventDateSynchronizer</members>
+		<name>ApexTrigger</name>
+	</types>
+	<types>
+		<members>CalendarEvent__c</members>
+		<name>CustomObject</name>
+	</types>
+	<types>
+		<members>calendarComponent</members>
+		<name>LightningComponentBundle</name>
+	</types>
+	<version>60.0</version>
+</Package>
