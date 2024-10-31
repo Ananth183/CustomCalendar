@@ -4,8 +4,7 @@
             <lightning-button-icon icon-name="utility:left" alternative-text="Previous Month" onclick={handlePreviousMonth}></lightning-button-icon>
             <h2 class="current-month">{currentMonth}</h2>
             <lightning-button-icon icon-name="utility:right" alternative-text="Next Month" onclick={handleNextMonth}></lightning-button-icon>
-            <lightning-button variant="neutral" label="Toggle Time Zone" onclick={toggleTimeZone}></lightning-button>
-            <span class="time-zone-display">Current Time Zone: {currentTimeZone}</span>
+            <lightning-button variant="neutral" label={timeZoneButtonText} onclick={toggleTimeZone}></lightning-button>
         </div>
 
         <div class="calendar-grid">
@@ -26,14 +25,14 @@
 
     <template if:true={isModalOpen}>
         <section role="dialog" class="slds-modal slds-fade-in-open">
-            <div class="slds-modal__container">
+            <div class="slds-modal__container modal-container">
                 <header class="slds-modal__header">
                     <button class="slds-button slds-button_icon slds-button_icon-inverse slds-modal__close" title="Close" onclick={closeModal}>
                         <lightning-icon icon-name="utility:close" alternative-text="close" size="small"></lightning-icon>
                     </button>
                     <h2 class="slds-text-heading_medium">{selectedEvent.Name}</h2>
                 </header>
-                <div class="slds-modal__content">
+                <div class="slds-modal__content modal-content">
                     <p><strong>Description:</strong> {selectedEvent.Description__c}</p>
                     <p><strong>Status:</strong> {selectedEvent.Status__c}</p>
                     <p><strong>Start Time (NZST):</strong> {selectedEventStartTimeNZ}</p>
@@ -48,5 +47,4 @@
         </section>
         <div class="slds-backdrop slds-backdrop_open"></div>
     </template>
-    
 </template>

@@ -10,6 +10,7 @@ export default class CalendarComponent extends LightningElement {
     @track isModalOpen = false;
     @track timeZone = 'NZ'; // Default to NZ time zone
     @track currentTimeZone = 'NZST'; // To display on UI
+    @track timeZoneButtonText = 'Time Zone - NZ'; // To display on UI
 
     @track selectedEventStartTimeNZ;
     @track selectedEventEndTimeNZ;
@@ -41,22 +42,47 @@ export default class CalendarComponent extends LightningElement {
     updateMonthGrid(events = []) {
         const days = [];
         const monthStartDay = this.startDate.getDay();
-        const totalDays = this.endDate.getDate();
+        const totalDaysInMonth = this.endDate.getDate();
+        const previousMonthEndDate = new Date(this.startDate);
+        previousMonthEndDate.setDate(0); // Last day of the previous month
+        const daysInPreviousMonth = previousMonthEndDate.getDate();
     
-        // Pad the grid with empty slots for alignment at the start of the week
-        for (let i = 0; i < monthStartDay; i++) {
-            days.push({ date: null, dayNumber: null, events: [] });
+        // Pad start of the calendar with days from previous month if needed
+        for (let i = monthStartDay - 1; i >= 0; i--) {
+            const date = new Date(this.startDate.getFullYear(), this.startDate.getMonth() - 1, daysInPreviousMonth - i);
+            const dayEvents = this.getEventsForDay(date, events);
+            days.push({ date: date.toDateString(), dayNumber: date.getDate(), events: dayEvents, isInCurrentMonth: false });
         }
     
-        // Loop through each day in the month
-        for (let day = 1; day <= totalDays; day++) {
+        // Main month loop for each day in October
+        for (let day = 1; day <= totalDaysInMonth; day++) {
             const date = new Date(this.startDate.getFullYear(), this.startDate.getMonth(), day);
             const dayEvents = this.getEventsForDay(date, events);
-            days.push({ date: date.toDateString(), dayNumber: day, events: dayEvents });
+            days.push({ date: date.toDateString(), dayNumber: day, events: dayEvents, isInCurrentMonth: true });
+        }
+    
+        // Include the first few days of November for events that continue from October
+        const numberOfNextMonthDaysToShow = 7 - (days.length % 7);
+        for (let i = 1; i <= numberOfNextMonthDaysToShow; i++) {
+            const nextMonthDate = new Date(this.startDate.getFullYear(), this.startDate.getMonth() + 1, i);
+            const dayEvents = this.getEventsForDay(nextMonthDate, events);
+            days.push({ date: nextMonthDate.toDateString(), dayNumber: nextMonthDate.getDate(), events: dayEvents, isInCurrentMonth: false });
+        }
+    
+        // Complete the row by adding any remaining blank days
+        while (days.length % 7 !== 0) {
+            const extraDate = new Date(this.startDate.getFullYear(), this.startDate.getMonth() + 1, numberOfNextMonthDaysToShow + 1);
+            const dayEvents = this.getEventsForDay(extraDate, events);
+            days.push({ date: extraDate.toDateString(), dayNumber: extraDate.getDate(), events: dayEvents, isInCurrentMonth: false });
         }
     
         this.daysInMonth = days;
+        console.log('days in month---',this.daysInMonth);
     }
+    
+    
+    
+    
     
     getEventsForDay(date, events) {
         return events.filter(event => {
@@ -67,12 +93,21 @@ export default class CalendarComponent extends LightningElement {
                 ? new Date(event.End_Date_NZ__c) 
                 : new Date(event.End_Date_IST__c);
     
-            // Include events if any part of them overlaps the current day in the calendar
-            return (
-                eventStartDate <= date && eventEndDate >= date
-            );
+            // Log the comparison details for debugging
+            console.log('Checking date:', date);
+            console.log('Event Start:', eventStartDate, 'Event End:', eventEndDate);
+    
+            // Check if the event covers the date (i.e., it starts on or before the date and ends on or after the date)
+            const isEventInDay = eventStartDate <= date && eventEndDate >= date;
+            if (isEventInDay) {
+                console.log('Event matches for date:', date);
+            }
+            
+            return isEventInDay;
         });
     }
+    
+    
     
     
     
@@ -132,6 +167,7 @@ export default class CalendarComponent extends LightningElement {
     toggleTimeZone() {
         this.timeZone = this.timeZone === 'NZ' ? 'IST' : 'NZ';
         this.currentTimeZone = this.timeZone === 'NZ' ? 'NZST' : 'IST';
+        this.timeZoneButtonText = this.timeZone === 'NZ' ? 'Time Zone - NZ' : 'Time Zone - IST';
         this.convertTimes(); // Update times whenever timezone is toggled
         this.loadEvents();  // Reload events on toggle change
     }

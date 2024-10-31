@@ -1,31 +1,89 @@
+.lightning-card {
+    border: 1px solid #ddd; /* Border for the entire card */
+    border-radius: 5px; /* Rounded corners for the card */
+}
+
 .calendar-controls {
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 1rem;
 }
+
+.calendar-controls lightning-button-icon {
+    margin: 0; /* Remove margin for buttons */
+}
+
 .current-month {
     font-size: 1.5rem;
     font-weight: bold;
-    margin: 0 1rem;
+    margin: 0 0.5rem; /* Adjusted margin for month name */
 }
+
 .calendar-grid {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(7, 1fr); /* Maintain 7 columns */
     gap: 0.5rem;
+    padding: 0.5rem; /* Padding for the grid */
+    border: 1px solid #ddd; /* Border around the calendar grid */
+    border-radius: 5px; /* Rounded corners for the grid */
 }
+
 .calendar-day {
-    border: 1px solid #ddd;
-    padding: 0.5rem;
-    min-height: 100px;
+    border: 1px solid #ddd; /* Border for each day */
+    padding: 0.3rem; /* Reduced padding for mobile */
+    min-height: 60px; /* Reduced height for smaller screens */
+    font-size: 0.8rem; /* Smaller font size for better readability */
+    box-sizing: border-box; /* Ensure padding and border are included in total width/height */
 }
+
 .day-header {
     font-weight: bold;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.3rem; /* Reduced margin */
+    text-align: center;
 }
+
 .event-item {
     background-color: #e0f3ff;
-    margin-bottom: 0.2rem;
-    padding: 0.2rem;
+    margin-bottom: 0.1rem; /* Reduced margin */
+    padding: 0.1rem; /* Reduced padding */
     border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.75rem; /* Smaller font size for events */
+}
+
+/* Mobile styles */
+@media (max-width: 600px) {
+    .calendar-controls {
+        padding: 0.5rem; /* Add padding to the controls */
+    }
+    .calendar-day {
+        min-height: 60px; /* Ensured height is still comfortable */
+    }
+    .current-month {
+        font-size: 1.2rem; /* Slightly smaller text */
+    }
+    .event-item {
+        font-size: 0.75rem; /* Smaller font size for events */
+    }
+}
+
+/* Modal styles */
+.modal-container {
+    width: 90%; /* Responsive width */
+    max-width: 500px; /* Maximum width */
+    margin: auto; /* Center the modal */
+    border: 1px solid #ddd; /* Border for modal */
+    border-radius: 5px; /* Rounded corners for modal */
+}
+
+.modal-content {
+    font-size: 0.9rem; /* Adjust font size for modal content */
+}
+
+/* Additional styles for larger screens */
+@media (min-width: 601px) {
+    .calendar-grid {
+        grid-template-columns: repeat(7, 1fr); /* 7 columns on larger screens */
+    }
 }
