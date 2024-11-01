@@ -29,18 +29,28 @@
 .calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr); /* Maintain 7 columns */
-    gap: 0.5rem;
-    padding: 0.5rem; /* Padding for the grid */
+    gap: 0; /* Remove gaps to ensure uniformity */
+    padding: 0; /* Remove padding */
     border: 1px solid #ddd; /* Border around the calendar grid */
     border-radius: 5px; /* Rounded corners for the grid */
+    overflow: hidden; /* Hide overflow to remove scrollbar */
 }
 
 .calendar-day {
     border: 1px solid #ddd; /* Border for each day */
-    padding: 0.3rem; /* Reduced padding for mobile */
-    min-height: 60px; /* Reduced height for smaller screens */
-    font-size: 0.8rem; /* Smaller font size for better readability */
-    box-sizing: border-box; /* Ensure padding and border are included in total width/height */
+    height: 80px; /* Fixed height for uniformity */
+    display: flex; /* Flexbox for centering content */
+    flex-direction: column; /* Stack header and events */
+    justify-content: flex-start; /* Align items at the start */
+    box-sizing: border-box; /* Include padding and border in width/height */
+    position: relative; /* For absolute positioning of event items */
+    overflow-y: auto; /* Allow vertical scrolling when needed */
+}
+
+/* Set maximum height for event items within the calendar day */
+.event-list {
+    max-height: 60px; /* Limit height for events list */
+    overflow-y: auto; /* Scroll if events exceed max height */
 }
 
 .greyed-out {
@@ -73,6 +83,10 @@
     border-radius: 3px;
     cursor: pointer;
     font-size: 0.75rem; /* Smaller font size for events */
+    white-space: nowrap; /* Prevents text from wrapping */
+    overflow: hidden; /* Hides overflow text */
+    text-overflow: ellipsis; /* Shows ellipsis for overflowed text */
+    text-align: center; /* Center-align the text within the event item */
 }
 
 /* Mobile styles */
@@ -80,14 +94,19 @@
     .calendar-controls {
         padding: 0.5rem; /* Add padding to the controls */
     }
-    .calendar-day {
-        min-height: 60px; /* Ensured height is still comfortable */
-    }
     .current-month {
         font-size: 1.2rem; /* Slightly smaller text */
     }
     .event-item {
         font-size: 0.75rem; /* Smaller font size for events */
+    }
+
+    .calendar-day {
+        height: 60px; /* Adjust height for mobile */
+    }
+
+    .event-list {
+        max-height: 40px; /* Adjust max height on mobile */
     }
 }
 
@@ -127,11 +146,4 @@
 /* Additional styling for status text */
 .modal-content strong {
     color: #333; /* Dark color for strong text for better contrast */
-}
-
-/* Additional styles for larger screens */
-@media (min-width: 601px) {
-    .calendar-grid {
-        grid-template-columns: repeat(7, 1fr); /* 7 columns on larger screens */
-    }
 }

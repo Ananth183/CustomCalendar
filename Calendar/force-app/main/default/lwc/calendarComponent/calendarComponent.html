@@ -22,11 +22,13 @@
                     <div class="day-header">
                         <span if:true={day.dayNumber}>{day.dayNumber}</span>
                     </div>
-                    <template for:each={day.events} for:item="event">
-                        <div key={event.Id} class="event-item" data-id={event.Id} onclick={handleEventClick}>
-                            <span class="event-name">{event.Name}</span>
-                        </div>
-                    </template>
+                    <div class="event-list"> <!-- Wrapper for scrollable events list -->
+                        <template for:each={day.events} for:item="event">
+                            <div key={event.Id} class="event-item" data-id={event.Id} onclick={handleEventClick}>
+                                <span class="event-name">{event.Name}</span>
+                            </div>
+                        </template>
+                    </div>
                 </div>
             </template>
         </div>
@@ -52,7 +54,7 @@
                 </div>
                 <footer class="slds-modal__footer">
                     <button class="slds-button slds-button_neutral" onclick={closeModal}>Close</button>
-                    <button class="slds-button slds-button_brand" onclick={navigateToRecord}>Go to Event</button> <!-- New Button -->
+                    <button class="slds-button slds-button_brand" onclick={navigateToRecord}>Go to Event</button>
                 </footer>
             </div>
         </section>
