@@ -101,6 +101,10 @@
     background-color: #6cb97e;
 }
 
+.leave-day-event{
+    background-color: #e1e123;
+}
+
 /* Mobile styles */
 @media (max-width: 600px) {
     .calendar-controls {

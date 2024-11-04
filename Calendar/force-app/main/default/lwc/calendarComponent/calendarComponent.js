@@ -145,7 +145,8 @@ export default class CalendarComponent extends NavigationMixin(LightningElement)
         }).map(event => ({
             ...event,
             className: event.Type__c === 'Holiday' ? 'holiday-event' 
-                      : event.Type__c === 'WorkingDay' ? 'working-day-event' 
+                      : event.Type__c === 'WorkingDay' ? 'working-day-event' :
+                      event.Type__c === 'Leave' ? 'leave-day-event' 
                       : 'regular-event'
         }));
     }
