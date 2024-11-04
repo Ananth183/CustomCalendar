@@ -9,7 +9,7 @@ public with sharing class CalendarController {
         Date adjustedStartDate = startDate.addDays(-7);
         Date adjustedEndDate = endDate.addDays(7);
         
-        String queryString = 'SELECT Id, Name, Start_Date_NZ__c, End_Date_NZ__c, Start_Date_IST__c, End_Date_IST__c, Description__c, Status__c ' +
+        String queryString = 'SELECT Id, Name, Start_Date_NZ__c, End_Date_NZ__c, Start_Date_IST__c, End_Date_IST__c, Description__c, Status__c,Type__c ' +
                              'FROM CalendarEvent__c ' +
                              'WHERE ' + startDateField + ' <= :adjustedEndDate AND ' + endDateField + ' >= :adjustedStartDate ' +
                              'ORDER BY ' + startDateField + ' ASC';

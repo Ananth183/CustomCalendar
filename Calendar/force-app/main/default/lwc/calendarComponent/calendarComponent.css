@@ -89,6 +89,18 @@
     text-align: center; /* Center-align the text within the event item */
 }
 
+.holiday-event {
+    background-color: rgb(203, 104, 104); /* Styling for holiday events */
+}
+
+.regular-event{
+    background-color: #e0f3ff;
+}
+
+.working-day-event{
+    background-color: #6cb97e;
+}
+
 /* Mobile styles */
 @media (max-width: 600px) {
     .calendar-controls {
